@@ -20,7 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.androidproject.voicenotemanager.R
 
 @Composable
-fun MainTopBar() {
+fun CategoryListTopBar(
+) {
     TopAppBar(
         title = {
             Text(
@@ -38,8 +39,29 @@ fun MainTopBar() {
     )
 }
 
+@Composable
+fun NoteListTopBar(
+    categoryName: String,
+) {
+    TopAppBar(
+        title = {
+            Text(
+                modifier = Modifier.padding(start = 5.dp),
+                text = categoryName,
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = {}) {
+                Icon(Icons.Filled.Menu, "")
+            }
+        },
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
 @Preview
 @Composable
 private fun PreviewApp() {
-    MainTopBar()
+    CategoryListTopBar()
 }
