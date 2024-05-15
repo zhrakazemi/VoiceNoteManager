@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.androidproject.voicenotemanager.ui.MainTopBar
+import com.androidproject.voicenotemanager.ui.CategoryListTopBar
 
 
 @Composable
@@ -34,7 +34,7 @@ fun CategoryListScreen(
             Icon(Icons.Filled.Add, "")
         }
     }, topBar = {
-        MainTopBar()
+        CategoryListTopBar()
     }) { innerPadding ->
         CategoryList(modifier = Modifier.padding(innerPadding), categories)
     }
