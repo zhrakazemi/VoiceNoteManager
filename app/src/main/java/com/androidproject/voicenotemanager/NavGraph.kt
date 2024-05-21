@@ -16,9 +16,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.androidproject.voicenotemanager.DestinationsArgs.CATEGORY_ID_ARG
-import com.androidproject.voicenotemanager.ui.categorylist.CategoryList
+import com.androidproject.voicenotemanager.DestinationsArgs.NOTE_ID_ARG
 import com.androidproject.voicenotemanager.ui.categorylist.CategoryListScreen
+import com.androidproject.voicenotemanager.ui.note.NoteScreen
 import com.androidproject.voicenotemanager.ui.notelist.NoteListScreen
+import com.androidproject.voicenotemanager.ui.record.RecordScreen
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -51,11 +53,27 @@ fun NavGraph(
                 navArgument(CATEGORY_ID_ARG) { type = NavType.StringType; nullable = true }
             )
         )
-        {entry ->
-
+        { entry ->
+            NoteListScreen(categoryId = entry.arguments?.getString(CATEGORY_ID_ARG))
         }
-
-
+        composable(
+            Destinations.RECORD_ROUTE,
+            arguments = listOf(
+                navArgument(NOTE_ID_ARG) { type = NavType.StringType; nullable = true }
+            )
+        )
+        { entry ->
+            RecordScreen(noteId = entry.arguments?.getString(NOTE_ID_ARG))
+        }
+        composable(
+            Destinations.NOTES_ROUTE,
+            arguments = listOf(
+                navArgument(NOTE_ID_ARG) { type = NavType.StringType; nullable = true }
+            )
+        )
+        { entry ->
+            NoteScreen(noteId = entry.arguments?.getString(NOTE_ID_ARG))
+        }
     }
 
 }

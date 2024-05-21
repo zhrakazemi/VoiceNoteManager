@@ -27,8 +27,9 @@ import com.androidproject.voicenotemanager.ui.NoteListTopBar
 
 @Composable
 fun NoteListScreen(
-    notes: List<String>,
-    categoryName: String
+    notes: List<String> = mutableListOf(),
+    categoryName: String = "",
+    categoryId: String?,
 ) {
     Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
         FloatingActionButton(onClick = {}) {
@@ -37,14 +38,14 @@ fun NoteListScreen(
     }, topBar = {
         NoteListTopBar(categoryName)
     }) { innerPadding ->
-        CategoryList(modifier = Modifier.padding(innerPadding), notes)
+        NoteList(modifier = Modifier.padding(innerPadding), notes)
     }
 
 
 }
 
 @Composable
-fun CategoryList(
+fun NoteList(
     modifier: Modifier, notes: List<String>
 ) {
     LazyVerticalGrid(modifier = modifier, columns = GridCells.Fixed(2)) {
@@ -82,5 +83,5 @@ fun NoteItem(name: String) {
 @Composable
 private fun MainPreview() {
     val categories = listOf("section 1", "section 2", "section 3")
-    NoteListScreen(categories, "math")
+    NoteListScreen(categories, "math", "")
 }
