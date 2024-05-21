@@ -1,14 +1,15 @@
 package com.androidproject.voicenotemanager
 
-import com.androidproject.voicenotemanager.Navigation.TodoDestinationsArgs.CATEGORY_ID_ARG
-import com.androidproject.voicenotemanager.Navigation.TodoDestinationsArgs.NOTE_ID_ARG
-import com.androidproject.voicenotemanager.Navigation.TodoScreens.NOTE_LIST_SCREEN
-import com.androidproject.voicenotemanager.Navigation.TodoScreens.NOTE_SCREEN
-import com.androidproject.voicenotemanager.Navigation.TodoScreens.CATEGORY_LIST_SCREEN
-import com.androidproject.voicenotemanager.Navigation.TodoScreens.RECORD_SCREEN
-class Navigation {
+import androidx.navigation.NavHostController
+import com.androidproject.voicenotemanager.DestinationsArgs.CATEGORY_ID_ARG
+import com.androidproject.voicenotemanager.DestinationsArgs.NOTE_ID_ARG
+import com.androidproject.voicenotemanager.Screens.NOTE_LIST_SCREEN
+import com.androidproject.voicenotemanager.Screens.NOTE_SCREEN
+import com.androidproject.voicenotemanager.Screens.CATEGORY_LIST_SCREEN
+import com.androidproject.voicenotemanager.Screens.RECORD_SCREEN
 
-    private object TodoScreens {
+
+    private object Screens {
         const val NOTE_SCREEN = "note"
         const val NOTE_LIST_SCREEN = "noteList"
         const val CATEGORY_LIST_SCREEN = "categoryList"
@@ -16,17 +17,20 @@ class Navigation {
     }
 
 
-    object TodoDestinationsArgs {
+    object DestinationsArgs {
         const val CATEGORY_ID_ARG = "categoryId"
         const val NOTE_ID_ARG = "noteId"
     }
 
 
-    object TodoDestinations {
+    object Destinations {
         const val NOTES_ROUTE = "$NOTE_SCREEN?$NOTE_ID_ARG={$NOTE_ID_ARG}"
         const val NOTE_LIST_ROUTE = "$NOTE_LIST_SCREEN?$CATEGORY_ID_ARG={$CATEGORY_ID_ARG}"
         const val CATEGORY_LIST_ROUTE = CATEGORY_LIST_SCREEN
         const val RECORD_ROUTE = "$RECORD_SCREEN?$NOTE_ID_ARG={$NOTE_ID_ARG}"
     }
 
+class NavigationActions(private val navController: NavHostController) {
+
 }
+

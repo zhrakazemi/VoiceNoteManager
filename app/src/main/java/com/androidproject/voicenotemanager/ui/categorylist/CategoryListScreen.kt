@@ -27,7 +27,7 @@ import com.androidproject.voicenotemanager.ui.CategoryListTopBar
 
 @Composable
 fun CategoryListScreen(
-    categories: List<String>,
+    categories: List<String> = mutableListOf(),
     ) {
     Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
         FloatingActionButton(onClick = {}) {
