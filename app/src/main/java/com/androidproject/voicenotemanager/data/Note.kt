@@ -4,7 +4,8 @@ data class Note(
     val id: String,
     val name: String,
     val recordedVoice: String,
-    val attachment: List<String>,
+    val attachmentsId: List<String>,
+    val categoryId: String
 ) {
 
 }
