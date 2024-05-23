@@ -18,7 +18,8 @@ data class LocalNote(
     @PrimaryKey val id: String,
     val name: String,
     val recordedVoice: String,
-    val categoryId : String
+    val categoryId: String,
+    val userNotes: String
 )
 
 @Entity(
