@@ -1,7 +1,7 @@
 package com.androidproject.voicenotemanager.data
 
 // External to local
-fun Note.toLocal() = LocalNote(
+ fun Note.toLocal() = LocalNote(
     id = id,
     name = name,
     recordedVoice = recordedVoice,

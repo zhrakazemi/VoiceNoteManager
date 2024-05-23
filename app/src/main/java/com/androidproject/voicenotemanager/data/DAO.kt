@@ -11,15 +11,15 @@ interface DAO {
     fun getNote(id: String): LocalNote
 
     @Query("SELECT * FROM note WHERE categoryId =:id")
-    fun getCategory(id: String): LocalNote
+    fun getCategory(id: String): List<LocalNote>
 
     @Query("SELECT * FROM category")
-    fun getCategoryList(): LocalNote
+    fun getCategoryList(): List<LocalCategory>
 
     @Upsert
-    suspend fun upsertNote(note: LocalNote)
+     fun upsertNote(note: LocalNote)
 
     @Upsert
-    suspend fun upsertCategory(category: LocalCategory)
+     fun upsertCategory(category: LocalCategory)
 
 }
