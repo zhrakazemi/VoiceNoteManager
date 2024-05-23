@@ -22,6 +22,7 @@ import com.androidproject.voicenotemanager.ui.note.NoteScreen
 import com.androidproject.voicenotemanager.ui.notelist.NoteListScreen
 import com.androidproject.voicenotemanager.ui.record.RecordScreen
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun NavGraph(
@@ -45,7 +46,9 @@ fun NavGraph(
         composable(
             Destinations.CATEGORY_LIST_ROUTE
         ) {
-            //CategoryListScreen()
+            CategoryListScreen(
+                openDrawer = { coroutineScope.launch { drawerState.open() } }
+            )
         }
         composable(
             Destinations.NOTE_LIST_ROUTE,
@@ -54,7 +57,10 @@ fun NavGraph(
             )
         )
         { entry ->
-            NoteListScreen(categoryId = entry.arguments?.getString(CATEGORY_ID_ARG))
+            NoteListScreen(
+                categoryId = entry.arguments?.getString(CATEGORY_ID_ARG),
+                openDrawer = { coroutineScope.launch { drawerState.open() } }
+            )
         }
         composable(
             Destinations.RECORD_ROUTE,

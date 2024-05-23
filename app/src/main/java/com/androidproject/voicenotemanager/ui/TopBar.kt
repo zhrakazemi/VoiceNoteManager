@@ -37,7 +37,7 @@ fun CategoryListTopBar(openDrawer: () -> Unit) {
             )
         },
         navigationIcon = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = openDrawer) {
                 Icon(Icons.Filled.Menu, "")
             }
         },
@@ -48,6 +48,7 @@ fun CategoryListTopBar(openDrawer: () -> Unit) {
 @Composable
 fun NoteListTopBar(
     categoryName: String,
+    openDrawer: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -58,7 +59,7 @@ fun NoteListTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = openDrawer) {
                 Icon(Icons.Filled.Menu, "")
             }
         },

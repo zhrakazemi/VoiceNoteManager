@@ -45,7 +45,7 @@ fun CategoryListScreen(
 
 @Composable
 fun CategoryList(
-    modifier: Modifier, categories: List<String>
+    modifier: Modifier, categories: List<String>,
 ) {
     LazyColumn(modifier) {
         items(categories) {

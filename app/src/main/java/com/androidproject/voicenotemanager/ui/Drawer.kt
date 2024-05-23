@@ -72,12 +72,16 @@ private fun AppDrawer(
         DrawerButton(
             imageVector = Icons.Filled.Home,
             label = "Home",
+            isSelected = currentRoute == Destinations.CATEGORY_LIST_ROUTE,
             action = {
+                navigationActions.navigateToCategoryList()
+                closeDrawer()
             }
         )
         DrawerButton(
             imageVector = Icons.Filled.ExitToApp,
             label = "Exit",
+            isSelected = false,
             action = {
             }
         )
@@ -112,10 +116,14 @@ private fun DrawerButton(
     imageVector: ImageVector,
     label: String,
     action: () -> Unit,
+    isSelected: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val tintColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-
+    val tintColor = if (isSelected) {
+        MaterialTheme.colorScheme.secondary
+    } else {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+    }
     TextButton(
         onClick = action,
         modifier = modifier

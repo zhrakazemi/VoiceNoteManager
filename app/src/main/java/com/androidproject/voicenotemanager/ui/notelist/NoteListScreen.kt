@@ -30,13 +30,14 @@ fun NoteListScreen(
     notes: List<String> = mutableListOf(),
     categoryName: String = "",
     categoryId: String?,
-) {
+    openDrawer: () -> Unit,
+    ) {
     Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
         FloatingActionButton(onClick = {}) {
             Icon(Icons.Filled.Add, "")
         }
     }, topBar = {
-        NoteListTopBar(categoryName)
+        NoteListTopBar(categoryName, openDrawer)
     }) { innerPadding ->
         NoteList(modifier = Modifier.padding(innerPadding), notes)
     }
@@ -83,5 +84,5 @@ fun NoteItem(name: String) {
 @Composable
 private fun MainPreview() {
     val categories = listOf("section 1", "section 2", "section 3")
-    NoteListScreen(categories, "math", "")
+    //NoteListScreen(categories, "math", "")
 }
