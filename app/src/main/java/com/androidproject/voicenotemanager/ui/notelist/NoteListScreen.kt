@@ -45,8 +45,12 @@ import com.androidproject.voicenotemanager.ui.NoteListTopBar
 
 @Composable
 fun NoteListScreen(
-    notes: List<String>,
-    categoryName: String
+    notes: List<String> = mutableListOf(),
+    categoryName: String = "",
+    categoryId: String?,
+    openDrawer: () -> Unit,
+
+    
 ) {
     val message = remember { mutableStateOf("") }
     val openDialog = remember { mutableStateOf(false) }
@@ -59,9 +63,9 @@ fun NoteListScreen(
             Icon(Icons.Filled.Add, "")
         }
     }, topBar = {
-        NoteListTopBar(categoryName)
+        NoteListTopBar(categoryName, openDrawer)
     }) { innerPadding ->
-        CategoryList(modifier = Modifier.padding(innerPadding), notes)
+        NoteList(modifier = Modifier.padding(innerPadding), notes)
     }
     if (openDialog.value) {
         Box(
@@ -86,7 +90,7 @@ fun NoteListScreen(
 }
 
 @Composable
-fun CategoryList(
+fun NoteList(
     modifier: Modifier, notes: List<String>
 ) {
     LazyVerticalGrid(modifier = modifier, columns = GridCells.Fixed(2)) {
@@ -188,5 +192,5 @@ fun CreateNoteDialog(
 @Composable
 private fun MainPreview() {
     val categories = listOf("section 1", "section 2", "section 3")
-    NoteListScreen(categories, "math")
+    //NoteListScreen(categories, "math", "")
 }
