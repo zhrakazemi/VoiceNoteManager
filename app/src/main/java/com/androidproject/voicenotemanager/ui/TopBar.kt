@@ -27,8 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.androidproject.voicenotemanager.R
 
 @Composable
-fun CategoryListTopBar(
-) {
+fun CategoryListTopBar(openDrawer: () -> Unit) {
     TopAppBar(
         title = {
             Text(
@@ -125,7 +124,7 @@ fun NoteTopBar(noteName: String) {
 @Preview
 @Composable
 private fun PreviewApp() {
-    CategoryListTopBar()
+    //CategoryListTopBar()
 }
 
 @Preview

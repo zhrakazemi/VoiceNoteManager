@@ -28,13 +28,14 @@ import com.androidproject.voicenotemanager.ui.CategoryListTopBar
 @Composable
 fun CategoryListScreen(
     categories: List<String> = mutableListOf(),
-    ) {
+    openDrawer: () -> Unit,
+) {
     Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
         FloatingActionButton(onClick = {}) {
             Icon(Icons.Filled.Add, "")
         }
     }, topBar = {
-        CategoryListTopBar()
+        CategoryListTopBar(openDrawer)
     }) { innerPadding ->
         CategoryList(modifier = Modifier.padding(innerPadding), categories)
     }
@@ -81,6 +82,6 @@ fun CategoryItem(name: String, number: Int) {
 @Composable
 private fun MainPreview() {
     val categories = listOf("math", "programming", "other")
-    CategoryListScreen(categories)
+    //CategoryListScreen(categories)
 }
 

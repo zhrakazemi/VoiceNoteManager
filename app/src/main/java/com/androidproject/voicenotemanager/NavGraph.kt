@@ -45,7 +45,7 @@ fun NavGraph(
         composable(
             Destinations.CATEGORY_LIST_ROUTE
         ) {
-            CategoryListScreen()
+            //CategoryListScreen()
         }
         composable(
             Destinations.NOTE_LIST_ROUTE,

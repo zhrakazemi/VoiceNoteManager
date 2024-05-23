@@ -1,6 +1,7 @@
 package com.androidproject.voicenotemanager
 
 import androidx.navigation.NavHostController
+import com.androidproject.voicenotemanager.Destinations.NOTES_ROUTE
 import com.androidproject.voicenotemanager.DestinationsArgs.CATEGORY_ID_ARG
 import com.androidproject.voicenotemanager.DestinationsArgs.NOTE_ID_ARG
 import com.androidproject.voicenotemanager.Screens.NOTE_LIST_SCREEN
@@ -31,6 +32,20 @@ import com.androidproject.voicenotemanager.Screens.RECORD_SCREEN
     }
 
 class NavigationActions(private val navController: NavHostController) {
+    fun navigateToCategoryList() {
+        navController.navigate(CATEGORY_LIST_SCREEN)
+    }
 
+    fun navigateToNotesList(categoryId: String) {
+        navController.navigate("$NOTE_LIST_SCREEN/$categoryId")
+    }
+
+    fun navigateToNote(noteId: String) {
+        navController.navigate("$NOTES_ROUTE/$noteId")
+    }
+
+    fun navigateToRecord(noteId: String) {
+        navController.navigate("$RECORD_SCREEN/$noteId")
+    }
 }
 
