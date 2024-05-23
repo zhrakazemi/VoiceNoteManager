@@ -9,8 +9,7 @@ import androidx.room.RoomDatabase
  * Note that exportSchema should be true in production databases.
  */
 @Database(entities = [LocalNote::class ,
-                     LocalCategory::class,
-                    LocalAttachment::class],
+                     LocalCategory::class],
                     version = 1, exportSchema = false)
 abstract class Database : RoomDatabase() {
 

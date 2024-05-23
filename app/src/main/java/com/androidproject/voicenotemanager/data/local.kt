@@ -18,7 +18,6 @@ data class LocalNote(
     @PrimaryKey val id: String,
     val name: String,
     val recordedVoice: String,
-    val attachmentsId: List<String>,
     val categoryId : String
 )
 
@@ -26,14 +25,6 @@ data class LocalNote(
     tableName = "category"
 )
 data class LocalCategory(
-    @PrimaryKey val id: String,
-    val name: String,
-)
-
-@Entity(
-    tableName = "attachment"
-)
-data class LocalAttachment(
     @PrimaryKey val id: String,
     val name: String,
 )
