@@ -8,6 +8,8 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 
 class ForegroundService : Service() {
+
+    val voskApi = VOSKApi()
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -22,6 +24,7 @@ class ForegroundService : Service() {
     }
 
     private fun start() {
+        voskApi.pause(true)
         val notification = NotificationCompat.Builder(this, "service_channel")
         notification.setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Service is Running")
@@ -30,6 +33,7 @@ class ForegroundService : Service() {
     }
 
     private fun stop() {
+        voskApi.pause(false)
         stopSelf()
     }
 
