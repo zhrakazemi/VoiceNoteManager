@@ -16,6 +16,9 @@ interface DAO {
     @Query("SELECT * FROM category")
     fun getCategoryList(): List<LocalCategory>
 
+    @Query("SELECT name FROM category WHERE id =:id")
+    fun getCategoryName(id: String): String
+
     @Upsert
      fun upsertNote(note: LocalNote)
 

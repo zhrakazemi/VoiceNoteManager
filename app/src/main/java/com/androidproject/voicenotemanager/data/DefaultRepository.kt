@@ -3,15 +3,18 @@ package com.androidproject.voicenotemanager.data
 import androidx.room.Dao
 import kotlinx.coroutines.withContext
 import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
 /**
  * @param localDataSource - The local data source
  */
-class DefaultRepository(
+@Singleton
+class DefaultRepository @Inject constructor(
     private val localDataSource: DAO,
-) {
-    fun createnote(name: String, categoryId: String): String {
+): Repository {
+    override fun createNote(name: String, categoryId: String): String {
 
         val noteId = UUID.randomUUID().toString()
         val temp = ""
@@ -27,7 +30,7 @@ class DefaultRepository(
     }
 
 
-    fun createCategory(name: String): String {
+    override fun createCategory(name: String): String {
 
         val categoryId = UUID.randomUUID().toString()
         val category = Category(
@@ -39,7 +42,7 @@ class DefaultRepository(
     }
 
 
-    fun updatenote(noteId: String, name: String, categoryId: String , recordedVoice : String , userNote : String) {
+    override fun updateNote(noteId: String, name: String, categoryId: String , recordedVoice : String , userNote : String) {
         val note = Note(
             id = localDataSource.getNote(noteId).toString(),
             name = name,
@@ -47,24 +50,27 @@ class DefaultRepository(
             userNotes = userNote,
             categoryId = categoryId
         )
-         ?: throw Exception("Task (id $noteId) not found")
 
         localDataSource.upsertNote(note.toLocal())
     }
 
 
-    fun getNotes(categoryId: String): List<Note> {
+    override fun getNotes(categoryId: String): List<Note> {
         return localDataSource.getCategory(categoryId).toExternal()
     }
 
 
-    fun getNote(noteId : String): Note {
+    override fun getNote(noteId : String): Note {
         return localDataSource.getNote(noteId).toExternal()
     }
 
 
-    fun getCategories(): List<Category> {
+    override fun getCategories(): List<Category> {
         return localDataSource.getCategoryList().toExternal()
+    }
+
+    override fun getCategoryName(categoryId: String): String {
+        return localDataSource.getCategoryName(categoryId)
     }
 
 
