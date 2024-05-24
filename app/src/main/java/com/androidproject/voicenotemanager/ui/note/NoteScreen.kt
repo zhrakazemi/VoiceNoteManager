@@ -40,8 +40,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.androidproject.voicenotemanager.NavigationActions
 import com.androidproject.voicenotemanager.ui.NoteTopBar
 
 @Composable
@@ -49,7 +49,8 @@ fun NoteScreen(
     note: String = "",
     time: String = "",
     noteId: String?,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    navigationActions: NavigationActions
 ) {
     Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
         Row(
@@ -57,7 +58,7 @@ fun NoteScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom
         ) {
-            RecordFloatingActionButton(time = time)
+            RecordFloatingActionButton(time = time, navigationActions , noteId)
             val expand by remember {
                 mutableStateOf(true)
             }
@@ -73,9 +74,11 @@ fun NoteScreen(
 }
 
 @Composable
-fun RecordFloatingActionButton(time: String) {
+fun RecordFloatingActionButton(time: String, navigationActions: NavigationActions , noteId : String?) {
     ExtendedFloatingActionButton(
-        onClick = {},
+        onClick = {
+            navigationActions.navigateToRecord(noteId)
+        },
         icon = { Icon(Icons.Filled.Mic, "") },
         text = { Text(text = time) },
     )
@@ -137,6 +140,7 @@ fun CustomFloatingActionButton(
                         Icon(
                             imageVector = Icons.Filled.Image,
                             contentDescription = null,
+
                         )
                         Spacer(modifier = Modifier.padding(horizontal = 2.dp))
                         Text(text = "Gallery")

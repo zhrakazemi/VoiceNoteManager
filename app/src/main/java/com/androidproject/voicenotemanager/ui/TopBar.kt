@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.rounded.Mic
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -106,17 +108,24 @@ fun RecordTopBar(time: String, noteName: String, onBack: () -> Unit) {
 fun NoteTopBar(noteName: String, onBack: () -> Unit) {
     TopAppBar(
         title = {
-            Text(
-                modifier = Modifier.padding(start = 5.dp),
-                text = noteName,
-                style = MaterialTheme.typography.titleLarge
-            )
+            Row {
+                Text(
+                    modifier = Modifier.padding(start = 5.dp),
+                    text = noteName,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                IconButton(onClick = { }){
+                    Icon(Icons.Filled.Save, "Save")
+                }
+            }
         },
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(Icons.Filled.ArrowBack, "")
             }
         },
+
+
         modifier = Modifier.fillMaxWidth()
     )
 }

@@ -17,7 +17,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.androidproject.voicenotemanager.DestinationsArgs.CATEGORY_ID_ARG
 import com.androidproject.voicenotemanager.DestinationsArgs.NOTE_ID_ARG
-import com.androidproject.voicenotemanager.ui.AppModalDrawer
 import com.androidproject.voicenotemanager.ui.categorylist.CategoryListScreen
 import com.androidproject.voicenotemanager.ui.note.NoteScreen
 import com.androidproject.voicenotemanager.ui.notelist.NoteListScreen
@@ -75,7 +74,9 @@ fun NavGraph(
         { entry ->
             RecordScreen(
                 noteId = entry.arguments?.getString(NOTE_ID_ARG),
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() } ,
+                navigationActions = navActions
+
             )
         }
         composable(
@@ -86,7 +87,9 @@ fun NavGraph(
         )
         { entry ->
             NoteScreen(noteId = entry.arguments?.getString(NOTE_ID_ARG),
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                navigationActions = navActions
+
             )
         }
     }
