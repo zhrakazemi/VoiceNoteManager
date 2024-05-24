@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -68,7 +67,7 @@ fun NoteListTopBar(
 }
 
 @Composable
-fun RecordTopBar(time: String, noteName: String) {
+fun RecordTopBar(time: String, noteName: String, onBack: () -> Unit) {
     TopAppBar(
         title = {
             Text(
@@ -95,7 +94,7 @@ fun RecordTopBar(time: String, noteName: String) {
             }
         },
         navigationIcon = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = onBack) {
                 Icon(Icons.Filled.ArrowBack, "")
             }
         },
@@ -104,7 +103,7 @@ fun RecordTopBar(time: String, noteName: String) {
 }
 
 @Composable
-fun NoteTopBar(noteName: String) {
+fun NoteTopBar(noteName: String, onBack: () -> Unit) {
     TopAppBar(
         title = {
             Text(
@@ -114,28 +113,10 @@ fun NoteTopBar(noteName: String) {
             )
         },
         navigationIcon = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = onBack) {
                 Icon(Icons.Filled.ArrowBack, "")
             }
         },
         modifier = Modifier.fillMaxWidth()
     )
-}
-
-@Preview
-@Composable
-private fun PreviewApp() {
-    //CategoryListTopBar()
-}
-
-@Preview
-@Composable
-private fun PreviewAppRecord() {
-    RecordTopBar("1:23", "math")
-}
-
-@Preview
-@Composable
-private fun PreviewAppNote() {
-    NoteTopBar("math")
 }

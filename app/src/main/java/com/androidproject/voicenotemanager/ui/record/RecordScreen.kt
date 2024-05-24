@@ -6,26 +6,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.androidproject.voicenotemanager.ui.RecordTopBar
 
 @Composable
 fun RecordScreen(
     noteId: String?,
     noteName: String = "",
-    time: String = "1:12"
+    time: String = "1:12",
+    onBack: () -> Unit,
+
 ) {
     Scaffold(modifier = Modifier.fillMaxWidth(), topBar = {
-        RecordTopBar(time, noteName)
+        RecordTopBar(time, noteName, onBack)
     }) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
 
         }
     }
-}
-
-@Preview
-@Composable
-private fun PreviewRecord() {
-    RecordScreen(noteId = "", noteName = "math")
 }

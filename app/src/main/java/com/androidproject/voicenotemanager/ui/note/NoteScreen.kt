@@ -48,7 +48,8 @@ import com.androidproject.voicenotemanager.ui.NoteTopBar
 fun NoteScreen(
     note: String = "",
     time: String = "",
-    noteId: String?
+    noteId: String?,
+    onBack: () -> Unit
 ) {
     Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
         Row(
@@ -63,7 +64,7 @@ fun NoteScreen(
             CustomFloatingActionButton(expandable = expand, onFabClick = { /*TODO*/ })
         }
     }, topBar = {
-        NoteTopBar(note)
+        NoteTopBar(note, onBack)
     }) { innerPadding ->
         Column(Modifier.padding(innerPadding)) {
 
@@ -218,10 +219,4 @@ fun CustomFloatingActionButton(
 
         }
     }
-}
-
-@Preview
-@Composable
-private fun NotePreview() {
-    NoteScreen(note = "math", time = "1:23", noteId = "")
 }

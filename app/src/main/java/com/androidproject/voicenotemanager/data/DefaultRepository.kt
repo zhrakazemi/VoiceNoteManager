@@ -14,7 +14,7 @@ import javax.inject.Singleton
 class DefaultRepository @Inject constructor(
     private val localDataSource: DAO,
 ): Repository {
-    override fun createNote(name: String, categoryId: String): String {
+    override suspend fun createNote(name: String, categoryId: String): String {
 
         val noteId = UUID.randomUUID().toString()
         val temp = ""
@@ -30,7 +30,7 @@ class DefaultRepository @Inject constructor(
     }
 
 
-    override fun createCategory(name: String): String {
+    override suspend fun createCategory(name: String): String {
 
         val categoryId = UUID.randomUUID().toString()
         val category = Category(
@@ -42,7 +42,7 @@ class DefaultRepository @Inject constructor(
     }
 
 
-    override fun updateNote(noteId: String, name: String, categoryId: String , recordedVoice : String , userNote : String) {
+    override suspend fun updateNote(noteId: String, name: String, categoryId: String , recordedVoice : String , userNote : String) {
         val note = Note(
             id = localDataSource.getNote(noteId).toString(),
             name = name,
@@ -55,24 +55,23 @@ class DefaultRepository @Inject constructor(
     }
 
 
-    override fun getNotes(categoryId: String): List<Note> {
+    override suspend fun getNotes(categoryId: String): List<Note> {
         return localDataSource.getCategory(categoryId).toExternal()
     }
 
 
-    override fun getNote(noteId : String): Note {
+    override suspend fun getNote(noteId : String): Note {
         return localDataSource.getNote(noteId).toExternal()
     }
 
 
-    override fun getCategories(): List<Category> {
+    override suspend fun getCategories(): List<Category> {
         return localDataSource.getCategoryList().toExternal()
     }
 
-    override fun getCategoryName(categoryId: String): String {
+    override suspend fun getCategoryName(categoryId: String): String {
         return localDataSource.getCategoryName(categoryId)
     }
-
 
 }
 

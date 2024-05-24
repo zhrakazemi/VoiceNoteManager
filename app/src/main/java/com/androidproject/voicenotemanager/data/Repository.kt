@@ -1,18 +1,17 @@
 package com.androidproject.voicenotemanager.data
 
 interface Repository {
-    fun createNote(name: String, categoryId: String): String
+    suspend fun createNote(name: String, categoryId: String): String
 
-    fun createCategory(name: String): String
+    suspend fun createCategory(name: String): String
 
-    fun updateNote(noteId: String, name: String, categoryId: String , recordedVoice : String , userNote : String)
+    suspend fun updateNote(noteId: String, name: String, categoryId: String , recordedVoice : String , userNote : String)
 
-    fun getNotes(categoryId: String): List<Note>
+    suspend fun getNotes(categoryId: String): List<Note>
 
-    fun getNote(noteId : String): Note
+    suspend fun getNote(noteId : String): Note
 
-    fun getCategories(): List<Category>
+    suspend fun getCategories(): List<Category>
 
-    fun getCategoryName(categoryId: String): String
-
+    suspend fun getCategoryName(categoryId: String): String
 }

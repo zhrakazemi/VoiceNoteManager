@@ -25,10 +25,10 @@ import com.androidproject.voicenotemanager.Screens.RECORD_SCREEN
 
 
     object Destinations {
-        const val NOTES_ROUTE = "$NOTE_SCREEN?$NOTE_ID_ARG={$NOTE_ID_ARG}"
-        const val NOTE_LIST_ROUTE = "$NOTE_LIST_SCREEN?$CATEGORY_ID_ARG={$CATEGORY_ID_ARG}"
+        const val NOTES_ROUTE = "$NOTE_SCREEN/{$NOTE_ID_ARG}"
+        const val NOTE_LIST_ROUTE = "$NOTE_LIST_SCREEN/{$CATEGORY_ID_ARG}"
         const val CATEGORY_LIST_ROUTE = CATEGORY_LIST_SCREEN
-        const val RECORD_ROUTE = "$RECORD_SCREEN?$NOTE_ID_ARG={$NOTE_ID_ARG}"
+        const val RECORD_ROUTE = "$RECORD_SCREEN/{$NOTE_ID_ARG}"
     }
 
 class NavigationActions(private val navController: NavHostController) {
