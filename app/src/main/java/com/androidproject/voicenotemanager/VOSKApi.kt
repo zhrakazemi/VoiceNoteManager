@@ -12,6 +12,7 @@ class VOSKApi : RecognitionListener {
 
 
     private var model: Model? = null
+    var getPause : Boolean = true
     private var speechService: SpeechService? = null
     private val speechStreamService: SpeechStreamService? = null
     var mainText : String = ""
@@ -36,7 +37,7 @@ class VOSKApi : RecognitionListener {
     }
 
     override fun onResult(hypothesis: String?) {
-      mainText =   mainText + hypothesis
+      mainText = mainText + hypothesis
     }
 
     override fun onFinalResult(hypothesis: String?) {
@@ -69,6 +70,7 @@ class VOSKApi : RecognitionListener {
      fun pause(checked: Boolean) {
         if (speechService != null) {
             speechService!!.setPause(checked)
+            getPause = checked
         }
     }
 }

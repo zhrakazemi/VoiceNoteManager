@@ -8,8 +8,12 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.androidproject.voicenotemanager.NavigationActions
 import com.androidproject.voicenotemanager.ui.RecordTopBar
 
@@ -20,9 +24,9 @@ fun RecordScreen(
     time: String = "1:12",
     onBack: () -> Unit,
     navigationActions: NavigationActions,
-
+    recordViewModel: RecordViewModel = hiltViewModel()
     ) {
-    Scaffold(modifier = Modifier.fillMaxWidth(),floatingActionButton = {
+    Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
         FloatingActionButton(onClick = {
             navigationActions.navigateToNote(noteId)
         }) {
@@ -32,7 +36,8 @@ fun RecordScreen(
         RecordTopBar(time, noteName, onBack)
     }) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-
+            val recordUiState by recordViewModel.uiState.collectAsState()
+            Text(text = recordUiState.recordedText)
         }
     }
 }

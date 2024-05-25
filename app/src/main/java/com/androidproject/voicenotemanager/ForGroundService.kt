@@ -7,9 +7,10 @@ import android.net.ConnectivityManager
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 
+val voskApi = VOSKApi()
+
 class ForegroundService : Service() {
 
-    val voskApi = VOSKApi()
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
