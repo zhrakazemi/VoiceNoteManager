@@ -12,11 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.vosk.Model
-import org.vosk.Recognizer
-import org.vosk.android.SpeechService
-import org.vosk.android.StorageService
-import java.io.IOException
 import javax.inject.Inject
 
 
