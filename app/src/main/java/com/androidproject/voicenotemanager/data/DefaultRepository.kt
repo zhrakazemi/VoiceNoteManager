@@ -44,7 +44,7 @@ class DefaultRepository @Inject constructor(
 
     override suspend fun updateNote(noteId: String, name: String, categoryId: String , recordedVoice : String , userNote : String) {
         val note = Note(
-            id = localDataSource.getNote(noteId).toString(),
+            id = noteId,
             name = name,
             recordedVoice = recordedVoice,
             userNotes = userNote,

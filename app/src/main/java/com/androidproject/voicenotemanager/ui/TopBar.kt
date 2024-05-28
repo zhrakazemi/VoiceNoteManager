@@ -11,21 +11,30 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.Mic
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.androidproject.voicenotemanager.R
+import com.androidproject.voicenotemanager.ui.note.NoteViewModel
+import com.androidproject.voicenotemanager.ui.record.RecordViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun CategoryListTopBar(openDrawer: () -> Unit) {
@@ -68,8 +77,15 @@ fun NoteListTopBar(
     )
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun RecordTopBar(time: String, noteName: String, onBack: () -> Unit) {
+fun RecordTopBar(
+    time: Long,
+    noteName: String,
+    onBack: () -> Unit,
+    recordViewModel: RecordViewModel
+) {
+
     TopAppBar(
         title = {
             Text(
@@ -84,19 +100,48 @@ fun RecordTopBar(time: String, noteName: String, onBack: () -> Unit) {
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    modifier = Modifier.size(30.dp),
-                    imageVector = Icons.Rounded.Mic,
-                    contentDescription = ""
+                IconButton(onClick ={
+                    recordViewModel.share()
+                }) {
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        imageVector = Icons.Rounded.Share,
+                        contentDescription = ""
+                    )
+                }
+                val recordPermissionState = rememberPermissionState(
+                    android.Manifest.permission.RECORD_AUDIO
                 )
+                IconButton(onClick = {
+                    when (recordPermissionState.status) {
+                        PermissionStatus.Granted -> {
+                            recordViewModel.startStopRecording()
+                        }
+
+                        is PermissionStatus.Denied -> {
+                            recordPermissionState.launchPermissionRequest()
+                        }
+                    }
+
+                }) {
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        imageVector = Icons.Rounded.Mic,
+                        contentDescription = ""
+                    )
+                }
                 Text(
-                    text = time,
+                    text = formatTime(time),
                     modifier = Modifier.padding(start = 5.dp),
                 )
             }
         },
         navigationIcon = {
-            IconButton(onClick = onBack) {
+            IconButton(onClick = {
+                recordViewModel.stopRecording()
+                recordViewModel.voskApi.mainText = ""
+                onBack()
+            }) {
                 Icon(Icons.Filled.ArrowBack, "")
             }
         },
@@ -104,18 +149,49 @@ fun RecordTopBar(time: String, noteName: String, onBack: () -> Unit) {
     )
 }
 
+fun formatTime(millis: Long): String {
+    val minutes = millis / 60L
+    val seconds = millis % 60L
+    return if (seconds < 10)
+        "$minutes:0$seconds"
+    else
+        "$minutes:$seconds"
+}
+
 @Composable
-fun NoteTopBar(noteName: String, onBack: () -> Unit) {
+fun NoteTopBar(
+    noteName: String,
+    onBack: () -> Unit,
+    saveNote: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    noteViewModel: NoteViewModel
+) {
     TopAppBar(
         title = {
-            Row {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text(
                     modifier = Modifier.padding(start = 5.dp),
                     text = noteName,
                     style = MaterialTheme.typography.titleLarge
                 )
-                IconButton(onClick = { }){
-                    Icon(Icons.Filled.Save, "Save")
+                Row {
+                    IconButton(onClick = {
+                        noteViewModel.share()
+                    }) {
+                        Icon(Icons.Filled.Share, "Save")
+                    }
+                    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+                    IconButton(onClick = {
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("saved!")
+                        }
+                        saveNote()
+                    }) {
+                        Icon(Icons.Filled.Save, "Save")
+                    }
                 }
             }
         },
