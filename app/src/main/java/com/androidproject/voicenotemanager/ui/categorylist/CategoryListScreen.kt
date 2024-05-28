@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -80,10 +81,6 @@ fun CategoryListScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    color = contentColorFor(MaterialTheme.colorScheme.background)
-                        .copy(alpha = 0.6f)
-                )
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -114,27 +111,28 @@ fun CategoryList(
 
 @Composable
 fun CategoryItem(name: String, number: Int?, id: String, navigationActions: NavigationActions) {
-
-    Column(
-        modifier = Modifier
-            .padding(vertical = 2.dp, horizontal = 3.dp)
-            .fillMaxSize()
-            .shadow(
-                elevation = 1.dp, shape = RoundedCornerShape(8.dp)
+    Card(
+        modifier = Modifier.padding(5.dp),
+        shape = RoundedCornerShape(40)
+        ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 10.dp)
+                .fillMaxSize()
+                .size(75.dp)
+                .clickable { navigationActions.navigateToNotesList(id)
+                }
+        ) {
+            Text(
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+                text = name,
+                style = MaterialTheme.typography.titleLarge,
             )
-            .size(75.dp)
-            .background(Color.White)
-            .clickable { navigationActions.navigateToNotesList(id) }
-    ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
-            text = name,
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Text(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            text = "items : $number",
-        )
+            Text(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                text = "items : $number",
+            )
+        }
     }
 }
 
@@ -204,12 +202,3 @@ fun CreateCategoryDialog(
         }
     }
 }
-
-
-@Preview(showBackground = true)
-@Composable
-private fun MainPreview() {
-    val categories = listOf("math", "programming", "other")
-    //CategoryListScreen(categories)
-}
-

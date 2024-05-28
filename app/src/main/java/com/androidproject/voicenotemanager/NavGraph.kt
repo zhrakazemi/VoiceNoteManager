@@ -87,9 +87,7 @@ fun NavGraph(
         )
         { entry ->
             NoteScreen(noteId = entry.arguments?.getString(NOTE_ID_ARG),
-                onBack = { navController.popBackStack() },
-                navigationActions = navActions
-
+                onBack = { navController.popBackStack() }
             )
         }
     }

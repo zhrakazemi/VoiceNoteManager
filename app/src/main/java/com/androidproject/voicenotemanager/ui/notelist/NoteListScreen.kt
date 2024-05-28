@@ -75,10 +75,6 @@ fun NoteListScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    color = contentColorFor(MaterialTheme.colorScheme.background)
-                        .copy(alpha = 0.6f)
-                )
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -97,7 +93,7 @@ fun NoteListScreen(
 fun NoteList(
     modifier: Modifier, notes: List<Note>, navigationActions: NavigationActions
 ) {
-    LazyVerticalGrid(modifier = modifier, columns = GridCells.Fixed(2)) {
+    LazyVerticalGrid(modifier = modifier, columns = GridCells.Fixed(3)) {
         items(notes) {
             NoteItem(name = it.name, id = it.id, navigationActions)
         }

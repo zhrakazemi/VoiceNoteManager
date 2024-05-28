@@ -41,7 +41,7 @@ class NavigationActions(private val navController: NavHostController) {
     }
 
     fun navigateToNote(noteId: String?) {
-        navController.navigate("$NOTES_ROUTE/$noteId")
+        navController.navigate("$NOTE_SCREEN/$noteId")
     }
 
     fun navigateToRecord(noteId: String?) {
