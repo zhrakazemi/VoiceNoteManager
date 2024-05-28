@@ -1,57 +1,68 @@
 package com.androidproject.voicenotemanager
 
+import android.content.Context
+import android.util.Log
+import dagger.hilt.android.qualifiers.ApplicationContext
 import org.vosk.Model
 import org.vosk.Recognizer
 import org.vosk.android.RecognitionListener
 import org.vosk.android.SpeechService
 import org.vosk.android.SpeechStreamService
+import org.vosk.android.StorageService
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
+class VOSKApi @Inject constructor(
+    @ApplicationContext private val appContext: Context
+) : RecognitionListener {
 
-class VOSKApi : RecognitionListener {
-
-
-    private var model: Model? = null
-    var getPause : Boolean = true
+    var model: Model? = null
+    var getPause: Boolean = true
     private var speechService: SpeechService? = null
     private val speechStreamService: SpeechStreamService? = null
-    var mainText : String = ""
+    var mainText: String = ""
 
     init {
-        this.recognizeMicrophone()
+        initModel()
         this.pause(true)
     }
 
     private fun initModel() {
-     /*   StorageService.unpack(
-            , "model-en-us", "model",
-            StorageService.Callback<Model> { model: Model? ->
-                this.model =
-                    model
+        StorageService.unpack(
+            appContext, "model-en-us", "model",
+            { model: Model? ->
+                this.model = model
             },
-            StorageService.Callback<IOException> { exception: IOException ->
-            })*/
+            { exception: IOException ->
+                Log.d("file error", exception.toString())
+            })
     }
+
     override fun onPartialResult(hypothesis: String?) {
-        TODO("Not yet implemented")
+        Log.d("TAG", "onPartialResult: $hypothesis")
     }
 
     override fun onResult(hypothesis: String?) {
-      mainText = mainText + hypothesis
+        val split = hypothesis?.split("\"")
+        if (split!![3] != "")
+            mainText += split[3] + " "
     }
 
     override fun onFinalResult(hypothesis: String?) {
-        TODO("Not yet implemented")
+        Log.d("TAG", "onFinalResult: $hypothesis")
     }
 
     override fun onError(exception: Exception?) {
-        TODO("Not yet implemented")
+        Log.d("TAG", "onErrorResult: ${exception?.message}")
     }
 
     override fun onTimeout() {
-        TODO("Not yet implemented")
+        Log.d("TAG", "onTimeResult")
     }
-     fun recognizeMicrophone() {
+
+    fun recognizeMicrophone() {
         if (speechService != null) {
             speechService!!.stop()
             speechService = null
@@ -60,14 +71,14 @@ class VOSKApi : RecognitionListener {
                 val rec = Recognizer(model, 16000.0f)
                 speechService = SpeechService(rec, 16000.0f)
                 speechService!!.startListening(this)
-            } catch (e: IOException) {
+            } catch (_: IOException) {
 
             }
         }
     }
 
 
-     fun pause(checked: Boolean) {
+    fun pause(checked: Boolean) {
         if (speechService != null) {
             speechService!!.setPause(checked)
             getPause = checked

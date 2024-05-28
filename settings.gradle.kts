@@ -20,5 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "VoiceNoteManager"
-include(":app")
- 
+include(":app", ":models")

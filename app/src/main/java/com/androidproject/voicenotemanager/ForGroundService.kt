@@ -2,14 +2,16 @@ package com.androidproject.voicenotemanager
 
 import android.app.Service
 import android.content.Intent
-import android.content.IntentFilter
-import android.net.ConnectivityManager
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-val voskApi = VOSKApi()
+@AndroidEntryPoint
+class ForegroundService @Inject constructor() : Service() {
 
-class ForegroundService : Service() {
+    @Inject
+    lateinit var voskApi: VOSKApi
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -25,16 +27,16 @@ class ForegroundService : Service() {
     }
 
     private fun start() {
-        voskApi.pause(true)
+        voskApi.pause(false)
         val notification = NotificationCompat.Builder(this, "service_channel")
         notification.setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Service is Running")
-            .setContentText("Here is the notification content")
+            .setContentText("Recording voice")
         startForeground(1, notification.build())
     }
 
     private fun stop() {
-        voskApi.pause(false)
+        voskApi.pause(true)
         stopSelf()
     }
 
