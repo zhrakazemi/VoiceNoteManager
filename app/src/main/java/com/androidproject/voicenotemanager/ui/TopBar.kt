@@ -2,12 +2,11 @@
 
 package com.androidproject.voicenotemanager.ui
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Save
@@ -23,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -58,7 +56,7 @@ fun CategoryListTopBar(openDrawer: () -> Unit) {
 @Composable
 fun NoteListTopBar(
     categoryName: String,
-    openDrawer: () -> Unit
+    onBack: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -69,8 +67,8 @@ fun NoteListTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = openDrawer) {
-                Icon(Icons.Filled.Menu, "")
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
             }
         },
         modifier = Modifier.fillMaxWidth()
@@ -93,48 +91,6 @@ fun RecordTopBar(
                 text = noteName,
                 style = MaterialTheme.typography.titleLarge
             )
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick ={
-                    recordViewModel.share()
-                }) {
-                    Icon(
-                        modifier = Modifier.size(30.dp),
-                        imageVector = Icons.Rounded.Share,
-                        contentDescription = ""
-                    )
-                }
-                val recordPermissionState = rememberPermissionState(
-                    android.Manifest.permission.RECORD_AUDIO
-                )
-                IconButton(onClick = {
-                    when (recordPermissionState.status) {
-                        PermissionStatus.Granted -> {
-                            recordViewModel.startStopRecording()
-                        }
-
-                        is PermissionStatus.Denied -> {
-                            recordPermissionState.launchPermissionRequest()
-                        }
-                    }
-
-                }) {
-                    Icon(
-                        modifier = Modifier.size(30.dp),
-                        imageVector = Icons.Rounded.Mic,
-                        contentDescription = ""
-                    )
-                }
-                Text(
-                    text = formatTime(time),
-                    modifier = Modifier.padding(start = 5.dp),
-                )
-            }
         },
         navigationIcon = {
             IconButton(onClick = {
@@ -142,8 +98,44 @@ fun RecordTopBar(
                 recordViewModel.voskApi.mainText = ""
                 onBack()
             }) {
-                Icon(Icons.Filled.ArrowBack, "")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
             }
+        },
+        actions = {
+            IconButton(onClick = {
+                recordViewModel.share()
+            }) {
+                Icon(
+                    modifier = Modifier.size(30.dp),
+                    imageVector = Icons.Rounded.Share,
+                    contentDescription = ""
+                )
+            }
+            val recordPermissionState = rememberPermissionState(
+                android.Manifest.permission.RECORD_AUDIO
+            )
+            IconButton(onClick = {
+                when (recordPermissionState.status) {
+                    PermissionStatus.Granted -> {
+                        recordViewModel.startStopRecording()
+                    }
+
+                    is PermissionStatus.Denied -> {
+                        recordPermissionState.launchPermissionRequest()
+                    }
+                }
+
+            }) {
+                Icon(
+                    modifier = Modifier.size(30.dp),
+                    imageVector = Icons.Rounded.Mic,
+                    contentDescription = ""
+                )
+            }
+            Text(
+                text = formatTime(time),
+                modifier = Modifier.padding(start = 5.dp),
+            )
         },
         modifier = Modifier.fillMaxWidth(),
     )
@@ -168,40 +160,33 @@ fun NoteTopBar(
 ) {
     TopAppBar(
         title = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    modifier = Modifier.padding(start = 5.dp),
-                    text = noteName,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Row {
-                    IconButton(onClick = {
-                        noteViewModel.share()
-                    }) {
-                        Icon(Icons.Filled.Share, "Save")
-                    }
-                    val coroutineScope: CoroutineScope = rememberCoroutineScope()
-                    IconButton(onClick = {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("saved!")
-                        }
-                        saveNote()
-                    }) {
-                        Icon(Icons.Filled.Save, "Save")
-                    }
-                }
-            }
+            Text(
+                modifier = Modifier.padding(start = 5.dp),
+                text = noteName,
+                style = MaterialTheme.typography.titleLarge
+            )
         },
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(Icons.Filled.ArrowBack, "")
             }
         },
-
-
+        actions = {
+            IconButton(onClick = {
+                noteViewModel.share()
+            }) {
+                Icon(Icons.Filled.Share, "Save")
+            }
+            val coroutineScope: CoroutineScope = rememberCoroutineScope()
+            IconButton(onClick = {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("saved!")
+                }
+                saveNote()
+            }) {
+                Icon(Icons.Filled.Save, "Save")
+            }
+        },
         modifier = Modifier.fillMaxWidth()
     )
 }

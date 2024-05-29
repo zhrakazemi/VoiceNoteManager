@@ -1,7 +1,6 @@
 package com.androidproject.voicenotemanager.ui.notelist
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -28,7 +27,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -50,9 +48,9 @@ import com.androidproject.voicenotemanager.ui.NoteListTopBar
 @Composable
 fun NoteListScreen(
     categoryId: String?,
-    openDrawer: () -> Unit,
     noteListViewModel: NoteListViewModel = hiltViewModel(),
     navigationActions: NavigationActions,
+    onBack: () -> Unit,
 ) {
     val message = remember { mutableStateOf("") }
     val openDialog = remember { mutableStateOf(false) }
@@ -67,7 +65,7 @@ fun NoteListScreen(
             Icon(Icons.Filled.Add, "")
         }
     }, topBar = {
-        NoteListTopBar(noteUiState.categoryName, openDrawer)
+        NoteListTopBar(noteUiState.categoryName, onBack)
     }) { innerPadding ->
         NoteList(modifier = Modifier.padding(innerPadding), noteUiState.notes, navigationActions)
     }
