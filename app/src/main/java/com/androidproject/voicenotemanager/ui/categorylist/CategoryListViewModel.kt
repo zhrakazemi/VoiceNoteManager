@@ -20,18 +20,37 @@ data class CategoryListUiState(
     val noteCount: MutableMap<String, Int> = mutableMapOf()
 )
 
+
+/**
+ * ViewModel responsible for managing the UI state of a category list screen.
+ *
+ * This ViewModel leverages Hilt for dependency injection and utilizes StateFlow
+ * to expose the UI state in a reactive way. It interacts with a Repository to
+ * fetch and manage categories and their associated note counts.
+ */
 @HiltViewModel
 class CategoryListViewModel @Inject constructor(
     private val repository: Repository,
 ) : ViewModel() {
-
+    /**
+     * A StateFlow representing the current UI state, including the list of categories
+     * and a map containing note counts for each category. This allows for reactive
+     * updates in the UI.
+     */
     private val _uiState = MutableStateFlow(CategoryListUiState())
     val uiState: StateFlow<CategoryListUiState> = _uiState.asStateFlow()
 
     init {
+        /**
+         * Upon initialization, fetch categories from the repository and update the UI state.
+         */
         getCategories()
     }
 
+    /**
+     * Fetches categories from the repository and updates the UI state with the retrieved list.
+     * This method also calculates and updates the note count for each category.
+     */
     private fun getCategories() {
         viewModelScope.launch {
             _uiState.update { currentState ->
@@ -48,6 +67,13 @@ class CategoryListViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Creates a new category with the given name. This method delegates the creation
+     * to the repository and then refetches categories to ensure the UI reflects the
+     * newly created category.
+     *
+     * @param name The name of the category to be created.
+     */
     fun createCategory(name: String) {
         viewModelScope.launch {
             repository.createCategory(name)

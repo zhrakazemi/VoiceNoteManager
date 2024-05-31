@@ -29,19 +29,54 @@ data class RecordUiState(
 var otimer: Long = 0
 var orunning: Boolean = true
 
-
+/**
+ * ViewModel responsible for managing the UI state of a note recording screen.
+ *
+ * This ViewModel leverages Hilt for dependency injection and utilizes StateFlow
+ * to expose the UI state in a reactive way. It interacts with a `VOSKApi` instance for
+ * voice recognition, a `Repository` to access and update note data, and a
+ * `ForegroundService` (not shown) to handle background recording functionality.
+ * It manages the recording process, displays the transcribed text, and allows sharing
+ * of the recorded content.
+ */
 @HiltViewModel
 class RecordViewModel @Inject constructor(
+    /**
+     * Application context obtained through dependency injection.
+     */
     @ApplicationContext private val appContext: Context,
+    /**
+     * Instance of the VOSKApi for voice recognition functionality.
+     */
     val voskApi: VOSKApi,
+    /**
+     * Repository instance used for interacting with note data.
+     */
     private val repository: Repository,
+    /**
+     * SavedStateHandle instance used to retrieve the note ID from navigation arguments.
+     */
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    /**
+     * A StateFlow representing the current UI state, including the transcribed text,
+     * the note's name, a timer displaying recording duration, and a flag indicating
+     * whether recording is paused. This allows for reactive updates in the UI.
+     */
     private val _uiState = MutableStateFlow(RecordUiState())
     val uiState: StateFlow<RecordUiState> = _uiState.asStateFlow()
+
+    /**
+     * The ID of the note being edited, retrieved from navigation arguments.
+     */
     private val noteId: String = savedStateHandle[DestinationsArgs.NOTE_ID_ARG]!!
 
     init {
+
+        /**
+         * Upon initialization, fetch the note's details and start a timer loop.
+         */
         getNote()
         viewModelScope.launch {
             while (true) {
@@ -70,12 +105,20 @@ class RecordViewModel @Inject constructor(
 
     private var firstStart = true
 
+    /**
+     * start recording and interacts with the foreground service.
+     */
     private fun startRecording() {
         if (firstStart) {
+            /**
+             * Initialize VOSK model on first start only. Consider moving this
+             * to a separate method for better organization.
+             */
             firstStart = false
             voskApi.recognizeMicrophone()
         }
         viewModelScope.launch {
+            // Start foreground service for background recording
             Intent(appContext, ForegroundService::class.java).also {
                 it.action = ForegroundService.Actions.START.toString()
                 appContext.startService(it)
@@ -98,6 +141,9 @@ class RecordViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Stops recording and interacts with the foreground service.
+     */
     fun stopRecording() {
         Intent(appContext, ForegroundService::class.java).also {
             it.action = ForegroundService.Actions.STOP.toString()
@@ -105,6 +151,9 @@ class RecordViewModel @Inject constructor(
         }
     }
 
+    /**
+     * start or stop recording.
+     */
     fun startStopRecording() {
         if (voskApi.model == null)
             return
@@ -115,6 +164,9 @@ class RecordViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Creates an intent to share the note's content and launches the share dialog.
+     */
     fun share(){
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND

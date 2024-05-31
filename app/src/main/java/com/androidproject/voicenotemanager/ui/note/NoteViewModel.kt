@@ -28,27 +28,54 @@ data class UiState(
     var userNote: String = "",
     val noteName: String = "",
     val timer: Long = 0
-) {
+)
 
-}
-
+/**
+ * ViewModel responsible for managing the UI state of a note editing screen.
+ *
+ * This ViewModel leverages Hilt for dependency injection and utilizes StateFlow
+ * to expose the UI state in a reactive way. It interacts with a Repository to
+ * fetch, update, and share a note identified by its ID. Additionally, it manages
+ * a timer displayed within the UI.
+ */
 @HiltViewModel
 class NoteViewModel @Inject constructor(
+    /**
+     * Application context obtained through dependency injection.
+     */
     @ApplicationContext private val appContext: Context,
+    /**
+     * Repository instance used for interacting with note data.
+     */
     private val repository: Repository,
+    /**
+     * SavedStateHandle instance used to retrieve the note ID from navigation arguments.
+     */
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+    /**
+     * A StateFlow representing the current UI state, including the note's name,
+     * user-entered content, and a timer value. This allows for reactive updates
+     * in the UI.
+     */
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+
+    /**
+     * The ID of the note being edited, retrieved from navigation arguments.
+     */
     private val noteId: String = savedStateHandle[DestinationsArgs.NOTE_ID_ARG]!!
 
     init {
+        /**
+         * Upon initialization, fetch the note's details and start the timer.
+         */
         getNote()
         viewModelScope.launch {
             _uiState.update { currentState ->
                 currentState.copy(timer = otimer)
             }
-            while (true){
+            while (true) {
                 delay(1000)
                 if (orunning) {
                     _uiState.update { currentState ->
@@ -59,6 +86,10 @@ class NoteViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Fetches the note's details from the repository and updates the UI state
+     * with the retrieved name and user notes.
+     */
     private fun getNote() {
         viewModelScope.launch {
             _uiState.update { currentState ->
@@ -70,6 +101,11 @@ class NoteViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Saves the updated note content to the repository. This method retrieves
+     * the current note data, updates the user notes field with the latest value
+     * from the UI state, and then calls the repository's update method.
+     */
     fun saveNote() {
         viewModelScope.launch {
             var usernote = repository.getNote(noteId)
@@ -82,13 +118,21 @@ class NoteViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Updates the user-entered note content within the UI state.
+     *
+     * @param newText The new text to be set as the user notes.
+     */
     fun updateText(newText: String) {
         _uiState.update {
             it.copy(userNote = newText)
         }
     }
 
-    fun share(){
+    /**
+     * Creates an intent to share the note's content and launches the share dialog.
+     */
+    fun share() {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, _uiState.value.userNote)
