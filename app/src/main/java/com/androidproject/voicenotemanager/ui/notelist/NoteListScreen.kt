@@ -1,7 +1,6 @@
 package com.androidproject.voicenotemanager.ui.notelist
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -28,33 +27,36 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.androidproject.voicenotemanager.NavigationActions
 import com.androidproject.voicenotemanager.R
+import com.androidproject.voicenotemanager.data.Note
 import com.androidproject.voicenotemanager.ui.NoteListTopBar
 
 @Composable
 fun NoteListScreen(
-    notes: List<String> = mutableListOf(),
-    categoryName: String = "",
     categoryId: String?,
-    openDrawer: () -> Unit,
-
-    
+    noteListViewModel: NoteListViewModel = hiltViewModel(),
+    navigationActions: NavigationActions,
+    onBack: () -> Unit,
 ) {
     val message = remember { mutableStateOf("") }
     val openDialog = remember { mutableStateOf(false) }
     val editMessage = remember { mutableStateOf("") }
+    val noteUiState by noteListViewModel.uiState.collectAsState()
+
     Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
         FloatingActionButton(onClick = {
             editMessage.value = message.value
@@ -63,18 +65,14 @@ fun NoteListScreen(
             Icon(Icons.Filled.Add, "")
         }
     }, topBar = {
-        NoteListTopBar(categoryName, openDrawer)
+        NoteListTopBar(noteUiState.categoryName, onBack)
     }) { innerPadding ->
-        NoteList(modifier = Modifier.padding(innerPadding), notes)
+        NoteList(modifier = Modifier.padding(innerPadding), noteUiState.notes, navigationActions)
     }
     if (openDialog.value) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    color = contentColorFor(MaterialTheme.colorScheme.background)
-                        .copy(alpha = 0.6f)
-                )
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -84,30 +82,33 @@ fun NoteListScreen(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            CreateNoteDialog(message, openDialog, editMessage)
+            CreateNoteDialog(message, openDialog, editMessage, noteListViewModel)
         }
     }
 }
 
 @Composable
 fun NoteList(
-    modifier: Modifier, notes: List<String>
+    modifier: Modifier, notes: List<Note>, navigationActions: NavigationActions
 ) {
-    LazyVerticalGrid(modifier = modifier, columns = GridCells.Fixed(2)) {
+    LazyVerticalGrid(modifier = modifier, columns = GridCells.Fixed(3)) {
         items(notes) {
-            NoteItem(name = it)
+            NoteItem(name = it.name, id = it.id, navigationActions)
         }
     }
 }
 
 @Composable
-fun NoteItem(name: String) {
+fun NoteItem(name: String, id: String, navigationActions: NavigationActions) {
     Card(
         modifier = Modifier.padding(8.dp),
     ) {
         Column(
-            Modifier.aspectRatio(1f),
+            Modifier
+                .aspectRatio(1f)
+                .clickable { navigationActions.navigateToRecord(id) },
             horizontalAlignment = Alignment.CenterHorizontally
+
         ) {
             Image(
                 modifier = Modifier
@@ -128,7 +129,8 @@ fun NoteItem(name: String) {
 fun CreateNoteDialog(
     message: MutableState<String>,
     openDialog: MutableState<Boolean>,
-    editMessage: MutableState<String>
+    editMessage: MutableState<String>,
+    noteListViewModel: NoteListViewModel
 ) {
     Dialog(onDismissRequest = {
         openDialog.value = false
@@ -179,6 +181,8 @@ fun CreateNoteDialog(
                     onClick = {
                         message.value = editMessage.value
                         openDialog.value = false
+                        noteListViewModel.createNote(editMessage.value)
+
                     }
                 ) {
                     Text("OK")
@@ -186,11 +190,4 @@ fun CreateNoteDialog(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun MainPreview() {
-    val categories = listOf("section 1", "section 2", "section 3")
-    //NoteListScreen(categories, "math", "")
 }

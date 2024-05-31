@@ -30,9 +30,13 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,44 +44,74 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.androidproject.voicenotemanager.ui.NoteTopBar
 
 @Composable
 fun NoteScreen(
-    note: String = "",
     time: String = "",
-    noteId: String?
+    noteId: String?,
+    onBack: () -> Unit,
+    noteViewModel: NoteViewModel = hiltViewModel()
 ) {
+    val noteUiState by noteViewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
         Row(
             modifier = Modifier.fillMaxWidth(.9f),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Bottom
         ) {
-            RecordFloatingActionButton(time = time)
+            RecordFloatingActionButton(time = noteUiState.timer, onBack)
             val expand by remember {
                 mutableStateOf(true)
             }
             CustomFloatingActionButton(expandable = expand, onFabClick = { /*TODO*/ })
         }
+    }, snackbarHost = {
+        SnackbarHost(hostState = snackbarHostState)
     }, topBar = {
-        NoteTopBar(note)
+        NoteTopBar(noteUiState.noteName, onBack, { noteViewModel.saveNote() }, snackbarHostState, noteViewModel)
     }) { innerPadding ->
-        Column(Modifier.padding(innerPadding)) {
+        Column(
+            Modifier
+                .padding(innerPadding)
+                .fillMaxWidth()
+        ) {
 
+            OutlinedTextField(
+                modifier = Modifier.fillMaxSize(),
+                value = noteUiState.userNote,
+                onValueChange = { noteViewModel.updateText(it) },
+                textStyle = TextStyle.Default.copy(fontSize = 20.sp)
+            )
         }
     }
 }
 
+
 @Composable
-fun RecordFloatingActionButton(time: String) {
+fun RecordFloatingActionButton(
+    time: Long,
+    onBack: () -> Unit,
+) {
     ExtendedFloatingActionButton(
-        onClick = {},
+        onClick = onBack,
         icon = { Icon(Icons.Filled.Mic, "") },
-        text = { Text(text = time) },
+        text = { Text(text = formatTime(time)) },
     )
+}
+
+fun formatTime(millis: Long): String {
+    val minutes = millis / 60L
+    val seconds = millis % 60L
+    return if (seconds < 10)
+        "$minutes:0$seconds"
+    else
+        "$minutes:$seconds"
 }
 
 @Composable
@@ -136,7 +170,8 @@ fun CustomFloatingActionButton(
                         Icon(
                             imageVector = Icons.Filled.Image,
                             contentDescription = null,
-                        )
+
+                            )
                         Spacer(modifier = Modifier.padding(horizontal = 2.dp))
                         Text(text = "Gallery")
                     }
@@ -218,10 +253,4 @@ fun CustomFloatingActionButton(
 
         }
     }
-}
-
-@Preview
-@Composable
-private fun NotePreview() {
-    NoteScreen(note = "math", time = "1:23", noteId = "")
 }

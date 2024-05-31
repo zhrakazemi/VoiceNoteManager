@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,19 +41,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.androidproject.voicenotemanager.NavigationActions
+import com.androidproject.voicenotemanager.data.Category
 import com.androidproject.voicenotemanager.ui.CategoryListTopBar
 
 
 @Composable
 fun CategoryListScreen(
+    categoryListViewModel: CategoryListViewModel = hiltViewModel(),
     openDrawer: () -> Unit,
-    categories: List<String>,
+    navigationActions: NavigationActions
 ) {
     val message = remember { mutableStateOf("") }
     val openDialog = remember { mutableStateOf(false) }
     val editMessage = remember { mutableStateOf("") }
+    val categoryUiState by categoryListViewModel.uiState.collectAsStateWithLifecycle()
 
-  Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
+    Scaffold(modifier = Modifier.fillMaxWidth(), floatingActionButton = {
         FloatingActionButton(onClick = {
             editMessage.value = message.value
             openDialog.value = true
@@ -61,17 +69,18 @@ fun CategoryListScreen(
     }, topBar = {
         CategoryListTopBar(openDrawer)
     }) { innerPadding ->
-        CategoryList(modifier = Modifier.padding(innerPadding), categories)
+        CategoryList(
+            modifier = Modifier.padding(innerPadding),
+            categoryUiState.categories,
+            navigationActions,
+            categoryUiState.noteCount
+        )
 
     }
     if (openDialog.value) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    color = contentColorFor(MaterialTheme.colorScheme.background)
-                        .copy(alpha = 0.6f)
-                )
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -81,43 +90,49 @@ fun CategoryListScreen(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            CreateCategoryDialog(message, openDialog, editMessage)
+            CreateCategoryDialog(message, openDialog, editMessage, categoryListViewModel)
         }
     }
 }
 
 @Composable
 fun CategoryList(
-    modifier: Modifier, categories: List<String>,
+    modifier: Modifier,
+    categories: List<Category>,
+    navigationActions: NavigationActions,
+    noteCount: MutableMap<String, Int>,
 ) {
     LazyColumn(modifier) {
         items(categories) {
-            CategoryItem(name = it, 1)
+            CategoryItem(name = it.name, noteCount[it.id], it.id, navigationActions)
         }
     }
 }
 
 @Composable
-fun CategoryItem(name: String, number: Int) {
-    Column(
-        modifier = Modifier
-            .padding(vertical = 2.dp, horizontal = 3.dp)
-            .fillMaxSize()
-            .shadow(
-                elevation = 1.dp, shape = RoundedCornerShape(8.dp)
+fun CategoryItem(name: String, number: Int?, id: String, navigationActions: NavigationActions) {
+    Card(
+        modifier = Modifier.padding(5.dp),
+        shape = RoundedCornerShape(40)
+        ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 10.dp)
+                .fillMaxSize()
+                .size(75.dp)
+                .clickable { navigationActions.navigateToNotesList(id)
+                }
+        ) {
+            Text(
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+                text = name,
+                style = MaterialTheme.typography.titleLarge,
             )
-            .size(75.dp)
-            .background(Color.White)
-    ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
-            text = name,
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Text(
-            modifier = Modifier.padding(horizontal = 10.dp),
-            text = "items : $number",
-        )
+            Text(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                text = "items : $number",
+            )
+        }
     }
 }
 
@@ -126,7 +141,8 @@ fun CategoryItem(name: String, number: Int) {
 fun CreateCategoryDialog(
     message: MutableState<String>,
     openDialog: MutableState<Boolean>,
-    editMessage: MutableState<String>
+    editMessage: MutableState<String>,
+    categoryListViewModel: CategoryListViewModel
 ) {
     Dialog(onDismissRequest = {
         openDialog.value = false
@@ -177,6 +193,7 @@ fun CreateCategoryDialog(
                     onClick = {
                         message.value = editMessage.value
                         openDialog.value = false
+                        categoryListViewModel.createCategory(editMessage.value)
                     }
                 ) {
                     Text("OK")
@@ -185,12 +202,3 @@ fun CreateCategoryDialog(
         }
     }
 }
-
-
-@Preview(showBackground = true)
-@Composable
-private fun MainPreview() {
-    val categories = listOf("math", "programming", "other")
-    //CategoryListScreen(categories)
-}
-

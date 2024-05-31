@@ -3,15 +3,18 @@ package com.androidproject.voicenotemanager.data
 import androidx.room.Dao
 import kotlinx.coroutines.withContext
 import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
 /**
  * @param localDataSource - The local data source
  */
-class DefaultRepository(
+@Singleton
+class DefaultRepository @Inject constructor(
     private val localDataSource: DAO,
-) {
-    fun createnote(name: String, categoryId: String): String {
+): Repository {
+    override suspend fun createNote(name: String, categoryId: String): String {
 
         val noteId = UUID.randomUUID().toString()
         val temp = ""
@@ -27,7 +30,7 @@ class DefaultRepository(
     }
 
 
-    fun createCategory(name: String): String {
+    override suspend fun createCategory(name: String): String {
 
         val categoryId = UUID.randomUUID().toString()
         val category = Category(
@@ -39,34 +42,36 @@ class DefaultRepository(
     }
 
 
-    fun updatenote(noteId: String, name: String, categoryId: String , recordedVoice : String , userNote : String) {
+    override suspend fun updateNote(noteId: String, name: String, categoryId: String , recordedVoice : String , userNote : String) {
         val note = Note(
-            id = localDataSource.getNote(noteId).toString(),
+            id = noteId,
             name = name,
             recordedVoice = recordedVoice,
             userNotes = userNote,
             categoryId = categoryId
         )
-         ?: throw Exception("Task (id $noteId) not found")
 
         localDataSource.upsertNote(note.toLocal())
     }
 
 
-    fun getNotes(categoryId: String): List<Note> {
+    override suspend fun getNotes(categoryId: String): List<Note> {
         return localDataSource.getCategory(categoryId).toExternal()
     }
 
 
-    fun getNote(noteId : String): Note {
+    override suspend fun getNote(noteId : String): Note {
         return localDataSource.getNote(noteId).toExternal()
     }
 
 
-    fun getCategories(): List<Category> {
+    override suspend fun getCategories(): List<Category> {
         return localDataSource.getCategoryList().toExternal()
     }
 
+    override suspend fun getCategoryName(categoryId: String): String {
+        return localDataSource.getCategoryName(categoryId)
+    }
 
 }
 

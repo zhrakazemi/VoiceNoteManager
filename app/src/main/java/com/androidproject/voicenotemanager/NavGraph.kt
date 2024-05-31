@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.androidproject.voicenotemanager.DestinationsArgs.CATEGORY_ID_ARG
 import com.androidproject.voicenotemanager.DestinationsArgs.NOTE_ID_ARG
+import com.androidproject.voicenotemanager.ui.AppModalDrawer
 import com.androidproject.voicenotemanager.ui.categorylist.CategoryListScreen
 import com.androidproject.voicenotemanager.ui.note.NoteScreen
 import com.androidproject.voicenotemanager.ui.notelist.NoteListScreen
@@ -46,9 +47,16 @@ fun NavGraph(
         composable(
             Destinations.CATEGORY_LIST_ROUTE
         ) {
-            CategoryListScreen(
-                openDrawer = { coroutineScope.launch { drawerState.open() } }
-            )
+            AppModalDrawer(
+                drawerState = drawerState,
+                currentRoute = currentRoute,
+                navigationActions = navActions
+            ) {
+                CategoryListScreen(
+                    openDrawer = { coroutineScope.launch { drawerState.open() } },
+                    navigationActions = navActions
+                )
+            }
         }
         composable(
             Destinations.NOTE_LIST_ROUTE,
@@ -59,7 +67,9 @@ fun NavGraph(
         { entry ->
             NoteListScreen(
                 categoryId = entry.arguments?.getString(CATEGORY_ID_ARG),
-                openDrawer = { coroutineScope.launch { drawerState.open() } }
+                onBack = { navController.popBackStack() },
+                navigationActions = navActions
+
             )
         }
         composable(
@@ -69,7 +79,12 @@ fun NavGraph(
             )
         )
         { entry ->
-            RecordScreen(noteId = entry.arguments?.getString(NOTE_ID_ARG))
+            RecordScreen(
+                noteId = entry.arguments?.getString(NOTE_ID_ARG),
+                onBack = { navController.popBackStack() },
+                navigationActions = navActions
+
+            )
         }
         composable(
             Destinations.NOTES_ROUTE,
@@ -78,7 +93,9 @@ fun NavGraph(
             )
         )
         { entry ->
-            NoteScreen(noteId = entry.arguments?.getString(NOTE_ID_ARG))
+            NoteScreen(noteId = entry.arguments?.getString(NOTE_ID_ARG),
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 
